@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruang Belajar Interaktif</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Nunito', sans-serif;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .bounce-in {
+      animation: bounceIn 0.5s ease-out;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
+    }
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .correct-answer {
+      animation: correctPulse 0.5s ease;
+    }
+    @keyframes correctPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); background-color: #10b981; }
+      100% { transform: scale(1); }
+    }
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100%) rotate(720deg); opacity: 0; }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full gradient-bg overflow-auto"><!-- Main Navigation -->
+   <nav id="main-nav" class="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+     <h1 id="nav-title" class="text-xl font-bold text-white flex items-center gap-2"><span class="text-2xl">📚</span> <span>Ruang Belajar Interaktif</span></h1>
+     <div class="flex gap-2"><button onclick="showView('home')" class="px-4 py-2 rounded-full text-white/80 hover:bg-white/20 transition-all text-sm font-semibold">Beranda</button> <button onclick="showView('teacher')" class="px-4 py-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all text-sm font-semibold">👩‍🏫 Mode Guru</button>
+     </div>
+    </div>
+   </nav><!-- Home View -->
+   <div id="home-view" class="p-4 md:p-8 max-w-6xl mx-auto">
+    <div class="text-center mb-8 bounce-in">
+     <h2 id="welcome-title" class="text-3xl md:text-4xl font-extrabold text-white mb-3">Selamat Datang! 🎉</h2>
+     <p id="welcome-text" class="text-white/80 text-lg">Pilih materi untuk mulai belajar</p>
+    </div>
+    <div id="materials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Materials will be rendered here -->
+    </div>
+    <div id="empty-state" class="hidden text-center py-16">
+     <div class="text-6xl mb-4">
+      📝
+     </div>
+     <h3 class="text-xl font-bold text-white mb-2">Belum Ada Materi</h3>
+     <p class="text-white/70 mb-6">Guru belum menambahkan materi pembelajaran</p><button onclick="showView('teacher')" class="px-6 py-3 bg-white rounded-full text-purple-600 font-bold hover:bg-white/90 transition-all"> Tambah Materi Sekarang </button>
+    </div>
+   </div><!-- Teacher View -->
+   <div id="teacher-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 bounce-in">
+     <div class="flex items-center gap-3 mb-6"><span class="text-3xl">👩‍🏫</span>
+      <h2 class="text-2xl font-bold text-gray-800">Panel Guru</h2>
+     </div>
+     <div class="space-y-6">
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Judul Materi</label> <input type="text" id="material-title" placeholder="Contoh: Sistem Tata Surya" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Konten Materi</label> <textarea id="material-content" rows="6" placeholder="Tulis materi pembelajaran di sini..." class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all resize-none text-gray-800"></textarea>
+      </div>
+      <div class="border-t-2 border-gray-100 pt-6">
+       <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2"><span>🎯</span> Pertanyaan Quiz</h3><button onclick="addQuestion()" class="px-4 py-2 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold hover:bg-purple-200 transition-all"> + Tambah Soal </button>
+       </div>
+       <div id="questions-container" class="space-y-4"><!-- Questions will be added here -->
+       </div>
+      </div>
+      <div class="flex gap-3 pt-4"><button onclick="saveMaterial()" id="save-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-bold hover:opacity-90 transition-all"> 💾 Simpan Materi </button> <button onclick="showView('home')" class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-all"> Kembali </button>
+      </div>
+     </div><!-- Saved Materials List -->
+     <div id="saved-materials-section" class="mt-8 pt-6 border-t-2 border-gray-100">
+      <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><span>📚</span> Materi Tersimpan</h3>
+      <div id="saved-materials-list" class="space-y-3"><!-- Saved materials will be listed here -->
+      </div>
+     </div>
+    </div>
+   </div><!-- Learning View -->
+   <div id="learning-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden bounce-in">
+     <div id="learning-header" class="gradient-bg p-6 text-white"><button onclick="showView('home')" class="mb-4 text-white/80 hover:text-white transition-all flex items-center gap-1"> ← Kembali </button>
+      <h2 id="learning-title" class="text-2xl font-bold"></h2>
+     </div>
+     <div id="learning-content" class="p-6 md:p-8">
+      <div id="material-text" class="prose prose-lg max-w-none text-gray-700 leading-relaxed"></div><button onclick="startQuiz()" id="start-quiz-btn" class="mt-8 w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold text-lg hover:opacity-90 transition-all pulse-glow"> 🎮 Mulai Quiz! </button>
+     </div>
+    </div>
+   </div><!-- Quiz View -->
+   <div id="quiz-view" class="hidden p-4 md:p-8 max-w-3xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden bounce-in">
+     <div class="p-4 bg-gray-50 border-b">
+      <div class="flex items-center justify-between mb-2"><span id="quiz-progress-text" class="text-sm font-semibold text-gray-600">Soal 1/5</span> <span id="quiz-score" class="text-sm font-semibold text-purple-600">Skor: 0</span>
+      </div>
+      <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+       <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-purple-500 to-pink-500 progress-bar" style="width: 0%"></div>
+      </div>
+     </div>
+     <div class="p-6 md:p-8">
+      <div id="quiz-question-container">
+       <h3 id="quiz-question" class="text-xl font-bold text-gray-800 mb-6"></h3>
+       <div id="quiz-options" class="space-y-3"><!-- Options will be rendered here -->
+       </div>
+      </div>
+      <div id="quiz-feedback" class="hidden text-center py-4">
+       <div id="feedback-icon" class="text-5xl mb-2"></div>
+       <p id="feedback-text" class="font-semibold"></p>
+      </div><button onclick="nextQuestion()" id="next-btn" class="hidden mt-6 w-full py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all"> Lanjut → </button>
+     </div>
+    </div>
+   </div><!-- Results View -->
+   <div id="results-view" class="hidden p-4 md:p-8 max-w-2xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 text-center bounce-in">
+     <div id="results-icon" class="text-7xl mb-4">
+      🏆
+     </div>
+     <h2 id="results-title" class="text-3xl font-extrabold text-gray-800 mb-2">Quiz Selesai!</h2>
+     <p id="results-subtitle" class="text-gray-600 mb-6"></p>
+     <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white mb-6">
+      <p class="text-sm opacity-80 mb-1">Skor Akhir</p>
+      <p id="final-score" class="text-5xl font-extrabold"></p>
+     </div>
+     <div id="results-stats" class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-green-50 rounded-xl p-4">
+       <p class="text-2xl font-bold text-green-600" id="correct-count">0</p>
+       <p class="text-sm text-green-600/80">Benar</p>
+      </div>
+      <div class="bg-red-50 rounded-xl p-4">
+       <p class="text-2xl font-bold text-red-500" id="wrong-count">0</p>
+       <p class="text-sm text-red-500/80">Salah</p>
+      </div>
+     </div>
+     <div class="flex gap-3"><button onclick="retryQuiz()" class="flex-1 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all"> 🔄 Ulangi Quiz </button> <button onclick="showView('home')" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-all"> 🏠 Beranda </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // App State
+    let materials = [];
+    let currentMaterial = null;
+    let currentQuestions = [];
+    let quizState = {
+      currentIndex: 0,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      answered: false
+    };
+    let questionCount = 0;
+
+    // Config
+    const defaultConfig = {
+      app_title: 'Ruang Belajar Interaktif',
+      welcome_message: 'Selamat datang di platform pembelajaran!',
+      background_color: '#667eea',
+      surface_color: '#ffffff',
+      text_color: '#1f2937',
+      primary_action: '#7c3aed',
+      secondary_action: '#ec4899',
+      font_family: 'Nunito',
+      font_size: 16
+    };
+
+    let config = { ...defaultConfig };
+
+    // Data Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        materials = data.filter(d => d.type === 'material');
+        renderMaterials();
+        renderSavedMaterials();
+      }
+    };
+
+    // Element SDK Functions
+    function onConfigChange(cfg) {
+      config = { ...defaultConfig, ...cfg };
+      
+      document.getElementById('nav-title').querySelector('span:last-child').textContent = config.app_title || defaultConfig.app_title;
+      document.getElementById('welcome-text').textContent = config.welcome_message || defaultConfig.welcome_message;
+      
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+      
+      const baseSize = config.font_size || defaultConfig.font_size;
+      document.getElementById('nav-title').style.fontSize = `${baseSize * 1.25}px`;
+      document.getElementById('welcome-title').style.fontSize = `${baseSize * 2.25}px`;
+      document.getElementById('welcome-text').style.fontSize = `${baseSize * 1.125}px`;
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => cfg.surface_color || defaultConfig.surface_color,
+            set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => cfg.primary_action || defaultConfig.primary_action,
+            set: (v) => { cfg.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); }
+          },
+          {
+            get: () => cfg.secondary_action || defaultConfig.secondary_action,
+            set: (v) => { cfg.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => cfg.font_family || defaultConfig.font_family,
+          set: (v) => { cfg.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => cfg.font_size || defaultConfig.font_size,
+          set: (v) => { cfg.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['app_title', cfg.app_title || defaultConfig.app_title],
+        ['welcome_message', cfg.welcome_message || defaultConfig.welcome_message]
+      ]);
+    }
+
+    // View Management
+    function showView(view) {
+      ['home-view', 'teacher-view', 'learning-view', 'quiz-view', 'results-view'].forEach(v => {
+        document.getElementById(v).classList.add('hidden');
+      });
+      document.getElementById(`${view}-view`).classList.remove('hidden');
+      
+      if (view === 'teacher') {
+        resetTeacherForm();
+      }
+    }
+
+    // Render Functions
+    function renderMaterials() {
+      const grid = document.getElementById('materials-grid');
+      const emptyState = document.getElementById('empty-state');
+      
+      if (materials.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      
+      const colors = ['from-blue-500 to-cyan-400', 'from-purple-500 to-pink-400', 'from-orange-500 to-yellow-400', 'from-green-500 to-emerald-400', 'from-red-500 to-rose-400'];
+      const icons = ['📖', '🔬', '🌍', '🧮', '🎨', '🎵', '💻', '🏛️'];
+      
+      grid.innerHTML = materials.map((m, i) => `
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover cursor-pointer" onclick="openMaterial('${m.__backendId}')">
+          <div class="h-32 bg-gradient-to-br ${colors[i % colors.length]} flex items-center justify-center">
+            <span class="text-5xl">${icons[i % icons.length]}</span>
+          </div>
+          <div class="p-5">
+            <h3 class="font-bold text-gray-800 text-lg mb-2">${escapeHtml(m.title)}</h3>
+            <p class="text-gray-500 text-sm line-clamp-2">${escapeHtml(m.content.substring(0, 100))}...</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                ${JSON.parse(m.questions || '[]').length} Soal Quiz
+              </span>
+              <span class="text-purple-600">→</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSavedMaterials() {
+      const list = document.getElementById('saved-materials-list');
+      
+      if (materials.length === 0) {
+        list.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Belum ada materi tersimpan</p>';
+        return;
+      }
+      
+      list.innerHTML = materials.map(m => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-800 truncate">${escapeHtml(m.title)}</p>
+            <p class="text-xs text-gray-500">${JSON.parse(m.questions || '[]').length} soal</p>
+          </div>
+          <button onclick="deleteMaterial('${m.__backendId}')" class="ml-2 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
+            🗑️
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Teacher Functions
+    function resetTeacherForm() {
+      document.getElementById('material-title').value = '';
+      document.getElementById('material-content').value = '';
+      document.getElementById('questions-container').innerHTML = '';
+      questionCount = 0;
+      addQuestion();
+    }
+
+    function addQuestion() {
+      if (questionCount >= 10) {
+        showToast('Maksimal 10 soal per materi', 'warning');
+        return;
+      }
+      
+      questionCount++;
+      const container = document.getElementById('questions-container');
+      const qDiv = document.createElement('div');
+      qDiv.className = 'bg-gray-50 rounded-xl p-4 space-y-3';
+      qDiv.id = `question-${questionCount}`;
+      qDiv.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-semibold text-purple-600">Soal ${questionCount}</span>
+          <button onclick="removeQuestion(${questionCount})" class="text-red-400 hover:text-red-600 text-sm">✕ Hapus</button>
+        </div>
+        <input type="text" placeholder="Tulis pertanyaan..." class="question-text w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:outline-none text-gray-800">
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="Opsi A (Benar)" class="option-a px-3 py-2 rounded-lg border-2 border-green-300 bg-green-50 focus:outline-none text-gray-800">
+          <input type="text" placeholder="Opsi B" class="option-b px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+          <input type="text" placeholder="Opsi C" class="option-c px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+          <input type="text" placeholder="Opsi D" class="option-d px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+        </div>
+        <p class="text-xs text-gray-400">💡 Opsi A selalu menjadi jawaban benar</p>
+      `;
+      container.appendChild(qDiv);
+    }
+
+    function removeQuestion(id) {
+      const q = document.getElementById(`question-${id}`);
+      if (q) {
+        q.remove();
+        questionCount--;
+      }
+    }
+
+    async function saveMaterial() {
+      const title = document.getElementById('material-title').value.trim();
+      const content = document.getElementById('material-content').value.trim();
+      
+      if (!title || !content) {
+        showToast('Mohon isi judul dan konten materi', 'error');
+        return;
+      }
+      
+      const questions = [];
+      const questionDivs = document.querySelectorAll('[id^="question-"]');
+      
+      questionDivs.forEach(div => {
+        const qText = div.querySelector('.question-text').value.trim();
+        const optA = div.querySelector('.option-a').value.trim();
+        const optB = div.querySelector('.option-b').value.trim();
+        const optC = div.querySelector('.option-c').value.trim();
+        const optD = div.querySelector('.option-d').value.trim();
+        
+        if (qText && optA && optB && optC && optD) {
+          questions.push({
+            question: qText,
+            options: [optA, optB, optC, optD],
+            correct: 0
+          });
+        }
+      });
+      
+      if (questions.length === 0) {
+        showToast('Tambahkan minimal 1 soal quiz lengkap', 'error');
+        return;
+      }
+      
+      if (materials.length >= 999) {
+        showToast('Batas maksimal materi tercapai (999)', 'error');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('save-btn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Menyimpan...';
+      
+      const result = await window.dataSdk.create({
+        id: Date.now().toString(),
+        type: 'material',
+        title: title,
+        content: content,
+        questions: JSON.stringify(questions),
+        created_at: new Date().toISOString()
+      });
+      
+      saveBtn.disabled = false;
+      saveBtn.textContent = '💾 Simpan Materi';
+      
+      if (result.isOk) {
+        showToast('Materi berhasil disimpan! 🎉', 'success');
+        resetTeacherForm();
+      } else {
+        showToast('Gagal menyimpan materi', 'error');
+      }
+    }
+
+    async function deleteMaterial(backendId) {
+      const material = materials.find(m => m.__backendId === backendId);
+      if (!material) return;
+      
+      const result = await window.dataSdk.delete(material);
+      if (result.isOk) {
+        showToast('Materi dihapus', 'success');
+      } else {
+        showToast('Gagal menghapus materi', 'error');
+      }
+    }
+
+    // Learning Functions
+    function openMaterial(backendId) {
+      currentMaterial = materials.find(m => m.__backendId === backendId);
+      if (!currentMaterial) return;
+      
+      document.getElementById('learning-title').textContent = currentMaterial.title;
+      document.getElementById('material-text').innerHTML = formatContent(currentMaterial.content);
+      
+      const questions = JSON.parse(currentMaterial.questions || '[]');
+      document.getElementById('start-quiz-btn').style.display = questions.length > 0 ? 'block' : 'none';
+      
+      showView('learning');
+    }
+
+    function formatContent(text) {
+      return text.split('\n').map(p => p.trim() ? `<p class="mb-4">${escapeHtml(p)}</p>` : '').join('');
+    }
+
+    // Quiz Functions
+    function startQuiz() {
+      if (!currentMaterial) return;
+      
+      currentQuestions = JSON.parse(currentMaterial.questions || '[]');
+      if (currentQuestions.length === 0) return;
+      
+      // Shuffle questions
+      currentQuestions = currentQuestions.sort(() => Math.random() - 0.5);
+      
+      quizState = {
+        currentIndex: 0,
+        score: 0,
+        correct: 0,
+        wrong: 0,
+        answered: false
+      };
+      
+      showView('quiz');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = currentQuestions[quizState.currentIndex];
+      if (!q) return;
+      
+      const total = currentQuestions.length;
+      const progress = ((quizState.currentIndex + 1) / total) * 100;
+      
+      document.getElementById('quiz-progress-text').textContent = `Soal ${quizState.currentIndex + 1}/${total}`;
+      document.getElementById('quiz-score').textContent = `Skor: ${quizState.score}`;
+      document.getElementById('quiz-progress-bar').style.width = `${progress}%`;
+      
+      document.getElementById('quiz-question').textContent = q.question;
+      
+      // Shuffle options but track correct answer
+      const options = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
+      const shuffled = options.sort(() => Math.random() - 0.5);
+      
+      document.getElementById('quiz-options').innerHTML = shuffled.map((opt, i) => `
+        <button onclick="selectAnswer(${i}, ${opt.isCorrect})" 
+          class="quiz-option w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all font-semibold text-gray-700">
+          <span class="inline-block w-8 h-8 rounded-full bg-gray-100 text-center leading-8 mr-3 text-sm">${String.fromCharCode(65 + i)}</span>
+          ${escapeHtml(opt.text)}
+        </button>
+      `).join('');
+      
+      document.getElementById('quiz-feedback').classList.add('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
+      document.getElementById('quiz-question-container').classList.remove('hidden');
+      quizState.answered = false;
+    }
+
+    function selectAnswer(index, isCorrect) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+      
+      const buttons = document.querySelectorAll('.quiz-option');
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === index) {
+          if (isCorrect) {
+            btn.classList.remove('border-gray-200');
+            btn.classList.add('border-green-500', 'bg-green-50', 'correct-answer');
+          } else {
+            btn.classList.remove('border-gray-200');
+            btn.classList.add('border-red-500', 'bg-red-50', 'shake');
+          }
+        }
+      });
+      
+      const feedback = document.getElementById('quiz-feedback');
+      const feedbackIcon = document.getElementById('feedback-icon');
+      const feedbackText = document.getElementById('feedback-text');
+      
+      if (isCorrect) {
+        quizState.score += 10;
+        quizState.correct++;
+        feedbackIcon.textContent = '🎉';
+        feedbackText.textContent = 'Benar sekali!';
+        feedbackText.className = 'font-semibold text-green-600';
+      } else {
+        quizState.wrong++;
+        feedbackIcon.textContent = '😅';
+        feedbackText.textContent = 'Yuk coba lagi nanti!';
+        feedbackText.className = 'font-semibold text-red-500';
+      }
+      
+      feedback.classList.remove('hidden');
+      document.getElementById('quiz-score').textContent = `Skor: ${quizState.score}`;
+      
+      const nextBtn = document.getElementById('next-btn');
+      nextBtn.classList.remove('hidden');
+      nextBtn.textContent = quizState.currentIndex < currentQuestions.length - 1 ? 'Lanjut →' : 'Lihat Hasil 🏆';
+    }
+
+    function nextQuestion() {
+      quizState.currentIndex++;
+      
+      if (quizState.currentIndex >= currentQuestions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      showView('results');
+      
+      const total = currentQuestions.length;
+      const percentage = Math.round((quizState.correct / total) * 100);
+      
+      let icon, title;
+      if (percentage >= 80) {
+        icon = '🏆';
+        title = 'Luar Biasa!';
+        createConfetti();
+      } else if (percentage >= 60) {
+        icon = '🌟';
+        title = 'Bagus Sekali!';
+      } else if (percentage >= 40) {
+        icon = '💪';
+        title = 'Terus Semangat!';
+      } else {
+        icon = '📚';
+        title = 'Ayo Belajar Lagi!';
+      }
+      
+      document.getElementById('results-icon').textContent = icon;
+      document.getElementById('results-title').textContent = title;
+      document.getElementById('results-subtitle').textContent = `Kamu menjawab ${quizState.correct} dari ${total} soal dengan benar`;
+      document.getElementById('final-score').textContent = `${quizState.score}`;
+      document.getElementById('correct-count').textContent = quizState.correct;
+      document.getElementById('wrong-count').textContent = quizState.wrong;
+    }
+
+    function retryQuiz() {
+      startQuiz();
+    }
+
+    function createConfetti() {
+      const colors = ['#667eea', '#764ba2', '#f093fb', '#ffd700', '#10b981'];
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+      }
+    }
+
+    // Utility Functions
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showToast(message, type = 'info') {
+      const existing = document.querySelector('.toast-message');
+      if (existing) existing.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast-message fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg z-50 font-semibold text-white';
+      toast.style.backgroundColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#f59e0b';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize
+    async function init() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+      }
+      
+      renderMaterials();
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1c9d92a0fdd4de',t:'MTc2OTA1OTM2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
