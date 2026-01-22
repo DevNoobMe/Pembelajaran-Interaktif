@@ -94,7 +94,7 @@
       📝
      </div>
      <h3 class="text-xl font-bold text-white mb-2">Belum Ada Materi</h3>
-     <p class="text-white/70 mb-6">Guru belum menambahkan materi pembelajaran</p><button onclick="showView('teacher')" class="px-6 py-3 bg-white rounded-full text-purple-600 font-bold hover:bg-white/90 transition-all"> Tambah Materi Sekarang </button>
+     <p class="text-white/70 mb-6">Guru belum menambahkan materi pembelajaran</p>
     </div>
    </div><!-- Teacher View -->
    <div id="teacher-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
@@ -368,18 +368,41 @@
       qDiv.className = 'bg-gray-50 rounded-xl p-4 space-y-3';
       qDiv.id = `question-${questionCount}`;
       qDiv.innerHTML = `
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-3">
           <span class="text-sm font-semibold text-purple-600">Soal ${questionCount}</span>
           <button onclick="removeQuestion(${questionCount})" class="text-red-400 hover:text-red-600 text-sm">✕ Hapus</button>
         </div>
         <input type="text" placeholder="Tulis pertanyaan..." class="question-text w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:outline-none text-gray-800">
-        <div class="grid grid-cols-2 gap-2">
-          <input type="text" placeholder="Opsi A (Benar)" class="option-a px-3 py-2 rounded-lg border-2 border-green-300 bg-green-50 focus:outline-none text-gray-800">
-          <input type="text" placeholder="Opsi B" class="option-b px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
-          <input type="text" placeholder="Opsi C" class="option-c px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
-          <input type="text" placeholder="Opsi D" class="option-d px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="Opsi A" class="option-a flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+            <label class="flex items-center gap-1 cursor-pointer text-xs font-semibold text-green-600 whitespace-nowrap">
+              <input type="radio" name="correct-${questionCount}" value="0" class="correct-option" checked style="cursor: pointer;">
+              ✓ Benar
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="Opsi B" class="option-b flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+            <label class="flex items-center gap-1 cursor-pointer text-xs font-semibold text-gray-500 hover:text-green-600 whitespace-nowrap transition-all">
+              <input type="radio" name="correct-${questionCount}" value="1" class="correct-option" style="cursor: pointer;">
+              ✓ Benar
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="Opsi C" class="option-c flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+            <label class="flex items-center gap-1 cursor-pointer text-xs font-semibold text-gray-500 hover:text-green-600 whitespace-nowrap transition-all">
+              <input type="radio" name="correct-${questionCount}" value="2" class="correct-option" style="cursor: pointer;">
+              ✓ Benar
+            </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" placeholder="Opsi D" class="option-d flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none text-gray-800">
+            <label class="flex items-center gap-1 cursor-pointer text-xs font-semibold text-gray-500 hover:text-green-600 whitespace-nowrap transition-all">
+              <input type="radio" name="correct-${questionCount}" value="3" class="correct-option" style="cursor: pointer;">
+              ✓ Benar
+            </label>
+          </div>
         </div>
-        <p class="text-xs text-gray-400">💡 Opsi A selalu menjadi jawaban benar</p>
       `;
       container.appendChild(qDiv);
     }
@@ -410,12 +433,14 @@
         const optB = div.querySelector('.option-b').value.trim();
         const optC = div.querySelector('.option-c').value.trim();
         const optD = div.querySelector('.option-d').value.trim();
+        const correctRadio = div.querySelector('input[type="radio"]:checked');
+        const correctIndex = correctRadio ? parseInt(correctRadio.value) : 0;
         
         if (qText && optA && optB && optC && optD) {
           questions.push({
             question: qText,
             options: [optA, optB, optC, optD],
-            correct: 0
+            correct: correctIndex
           });
         }
       });
@@ -686,5 +711,5 @@
 
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1c9d92a0fdd4de',t:'MTc2OTA1OTM2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1ca58df53cd4de',t:'MTc2OTA1OTY5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
