@@ -78,29 +78,57 @@
    <nav id="main-nav" class="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
      <h1 id="nav-title" class="text-xl font-bold text-white flex items-center gap-2"><span class="text-2xl">📚</span> <span>Ruang Belajar Interaktif</span></h1>
-     <div class="flex gap-2"><button onclick="showView('home')" class="px-4 py-2 rounded-full text-white/80 hover:bg-white/20 transition-all text-sm font-semibold">Beranda</button> <button onclick="showView('teacher')" class="px-4 py-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all text-sm font-semibold">👩‍🏫 Mode Guru</button>
+     <div class="flex gap-2" id="nav-buttons"><!-- Navigation buttons will be rendered here -->
      </div>
     </div>
-   </nav><!-- Home View -->
-   <div id="home-view" class="p-4 md:p-8 max-w-6xl mx-auto">
+   </nav><!-- Student Home View -->
+   <div id="student-home-view" class="p-4 md:p-8 max-w-6xl mx-auto">
     <div class="text-center mb-8 bounce-in">
      <h2 id="welcome-title" class="text-3xl md:text-4xl font-extrabold text-white mb-3">Selamat Datang! 🎉</h2>
      <p id="welcome-text" class="text-white/80 text-lg">Pilih materi untuk mulai belajar</p>
     </div>
-    <div id="materials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Materials will be rendered here -->
+    <div id="student-materials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Materials will be rendered here -->
     </div>
-    <div id="empty-state" class="hidden text-center py-16">
+    <div id="student-empty-state" class="hidden text-center py-16">
      <div class="text-6xl mb-4">
       📝
      </div>
      <h3 class="text-xl font-bold text-white mb-2">Belum Ada Materi</h3>
      <p class="text-white/70 mb-6">Guru belum menambahkan materi pembelajaran</p>
     </div>
-   </div><!-- Teacher View -->
-   <div id="teacher-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
+   </div><!-- Teacher Login View -->
+   <div id="teacher-login-view" class="hidden p-4 md:p-8 max-w-md mx-auto flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 w-full bounce-in">
+     <div class="text-center mb-8"><span class="text-5xl">👩‍🏫</span>
+      <h2 class="text-2xl font-bold text-gray-800 mt-4">Panel Guru</h2>
+     </div><!-- Login Tab -->
+     <div id="login-tab" class="space-y-4">
+      <h3 class="font-bold text-gray-800 text-lg mb-4">Login</h3>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Username</label> <input type="text" id="login-username" placeholder="Masukkan username" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Password</label> <input type="password" id="login-password" placeholder="Masukkan password" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div><button onclick="handleLogin()" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-bold hover:opacity-90 transition-all"> 🔓 Login </button> <button onclick="switchTab('register')" class="w-full py-2 text-purple-600 font-semibold hover:text-purple-700 transition-all"> Belum punya akun? Daftar di sini </button>
+     </div><!-- Register Tab -->
+     <div id="register-tab" class="hidden space-y-4">
+      <h3 class="font-bold text-gray-800 text-lg mb-4">Daftar Akun Baru</h3>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Username</label> <input type="text" id="register-username" placeholder="Buat username" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Password</label> <input type="password" id="register-password" placeholder="Buat password" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div>
+      <div><label class="block text-sm font-semibold text-gray-700 mb-2">Konfirmasi Password</label> <input type="password" id="register-confirm" placeholder="Ketik ulang password" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
+      </div><button onclick="handleRegister()" class="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-xl font-bold hover:opacity-90 transition-all"> ✓ Daftar </button> <button onclick="switchTab('login')" class="w-full py-2 text-purple-600 font-semibold hover:text-purple-700 transition-all"> Sudah punya akun? Login di sini </button>
+     </div>
+    </div>
+   </div><!-- Teacher Dashboard View -->
+   <div id="teacher-dashboard-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
     <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 bounce-in">
-     <div class="flex items-center gap-3 mb-6"><span class="text-3xl">👩‍🏫</span>
-      <h2 class="text-2xl font-bold text-gray-800">Panel Guru</h2>
+     <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3"><span class="text-3xl">👩‍🏫</span>
+       <div>
+        <h2 class="text-2xl font-bold text-gray-800">Panel Guru</h2>
+        <p id="teacher-username-display" class="text-sm text-gray-500"></p>
+       </div>
+      </div><button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 rounded-full text-sm font-semibold hover:bg-red-200 transition-all"> 🚪 Logout </button>
      </div>
      <div class="space-y-6">
       <div><label class="block text-sm font-semibold text-gray-700 mb-2">Judul Materi</label> <input type="text" id="material-title" placeholder="Contoh: Sistem Tata Surya" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-all text-gray-800">
@@ -114,7 +142,7 @@
        <div id="questions-container" class="space-y-4"><!-- Questions will be added here -->
        </div>
       </div>
-      <div class="flex gap-3 pt-4"><button onclick="saveMaterial()" id="save-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-bold hover:opacity-90 transition-all"> 💾 Simpan Materi </button> <button onclick="showView('home')" class="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-all"> Kembali </button>
+      <div class="flex gap-3 pt-4"><button onclick="saveMaterial()" id="save-btn" class="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-bold hover:opacity-90 transition-all"> 💾 Simpan Materi </button>
       </div>
      </div><!-- Saved Materials List -->
      <div id="saved-materials-section" class="mt-8 pt-6 border-t-2 border-gray-100">
@@ -123,17 +151,17 @@
       </div>
      </div>
     </div>
-   </div><!-- Learning View -->
+   </div><!-- Learning View (Student) -->
    <div id="learning-view" class="hidden p-4 md:p-8 max-w-4xl mx-auto">
     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden bounce-in">
-     <div id="learning-header" class="gradient-bg p-6 text-white"><button onclick="showView('home')" class="mb-4 text-white/80 hover:text-white transition-all flex items-center gap-1"> ← Kembali </button>
+     <div id="learning-header" class="gradient-bg p-6 text-white"><button onclick="showView('student-home')" class="mb-4 text-white/80 hover:text-white transition-all flex items-center gap-1"> ← Kembali </button>
       <h2 id="learning-title" class="text-2xl font-bold"></h2>
      </div>
      <div id="learning-content" class="p-6 md:p-8">
       <div id="material-text" class="prose prose-lg max-w-none text-gray-700 leading-relaxed"></div><button onclick="startQuiz()" id="start-quiz-btn" class="mt-8 w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold text-lg hover:opacity-90 transition-all pulse-glow"> 🎮 Mulai Quiz! </button>
      </div>
     </div>
-   </div><!-- Quiz View -->
+   </div><!-- Quiz View (Student) -->
    <div id="quiz-view" class="hidden p-4 md:p-8 max-w-3xl mx-auto">
     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden bounce-in">
      <div class="p-4 bg-gray-50 border-b">
@@ -155,7 +183,7 @@
       </div><button onclick="nextQuestion()" id="next-btn" class="hidden mt-6 w-full py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all"> Lanjut → </button>
      </div>
     </div>
-   </div><!-- Results View -->
+   </div><!-- Results View (Student) -->
    <div id="results-view" class="hidden p-4 md:p-8 max-w-2xl mx-auto">
     <div class="bg-white rounded-3xl shadow-2xl p-8 text-center bounce-in">
      <div id="results-icon" class="text-7xl mb-4">
@@ -177,16 +205,21 @@
        <p class="text-sm text-red-500/80">Salah</p>
       </div>
      </div>
-     <div class="flex gap-3"><button onclick="retryQuiz()" class="flex-1 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all"> 🔄 Ulangi Quiz </button> <button onclick="showView('home')" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-all"> 🏠 Beranda </button>
+     <div class="flex gap-3"><button onclick="retryQuiz()" class="flex-1 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all"> 🔄 Ulangi Quiz </button> <button onclick="showView('student-home')" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-all"> 🏠 Beranda </button>
      </div>
     </div>
    </div>
   </div>
   <script>
+    // Detect if this is teacher or student page
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTeacherPage = urlParams.get('role') === 'teacher';
+
     // App State
     let materials = [];
     let currentMaterial = null;
     let currentQuestions = [];
+    let currentTeacherUsername = null;
     let quizState = {
       currentIndex: 0,
       score: 0,
@@ -216,7 +249,7 @@
       onDataChanged(data) {
         materials = data.filter(d => d.type === 'material');
         renderMaterials();
-        renderSavedMaterials();
+        if (isTeacherPage) renderSavedMaterials();
       }
     };
 
@@ -279,72 +312,198 @@
       ]);
     }
 
+    // LocalStorage Credential Functions
+    function getAllCredentials() {
+      const stored = localStorage.getItem('teacher_credentials');
+      return stored ? JSON.parse(stored) : {};
+    }
+
+    function saveCredential(username, password) {
+      const credentials = getAllCredentials();
+      if (credentials[username]) {
+        return false;
+      }
+      credentials[username] = password;
+      localStorage.setItem('teacher_credentials', JSON.stringify(credentials));
+      return true;
+    }
+
+    function verifyCredential(username, password) {
+      const credentials = getAllCredentials();
+      return credentials[username] === password;
+    }
+
+    // Auth Functions
+    function switchTab(tab) {
+      document.getElementById('login-tab').classList.add('hidden');
+      document.getElementById('register-tab').classList.add('hidden');
+      document.getElementById(tab + '-tab').classList.remove('hidden');
+      
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+      document.getElementById('register-username').value = '';
+      document.getElementById('register-password').value = '';
+      document.getElementById('register-confirm').value = '';
+    }
+
+    function handleLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      
+      if (!username || !password) {
+        showToast('Mohon isi username dan password', 'error');
+        return;
+      }
+      
+      if (verifyCredential(username, password)) {
+        currentTeacherUsername = username;
+        document.getElementById('teacher-username-display').textContent = `Masuk sebagai: ${username}`;
+        showView('teacher-dashboard');
+        resetTeacherForm();
+      } else {
+        showToast('Username atau password salah', 'error');
+      }
+    }
+
+    function handleRegister() {
+      const username = document.getElementById('register-username').value.trim();
+      const password = document.getElementById('register-password').value.trim();
+      const confirm = document.getElementById('register-confirm').value.trim();
+      
+      if (!username || !password || !confirm) {
+        showToast('Mohon isi semua field', 'error');
+        return;
+      }
+      
+      if (username.length < 3) {
+        showToast('Username minimal 3 karakter', 'error');
+        return;
+      }
+      
+      if (password.length < 4) {
+        showToast('Password minimal 4 karakter', 'error');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showToast('Password tidak cocok', 'error');
+        return;
+      }
+      
+      if (saveCredential(username, password)) {
+        showToast('Akun berhasil dibuat! Silahkan login', 'success');
+        switchTab('login');
+      } else {
+        showToast('Username sudah terdaftar', 'error');
+      }
+    }
+
+    function handleLogout() {
+      currentTeacherUsername = null;
+      showView('teacher-login');
+    }
+
     // View Management
     function showView(view) {
-      ['home-view', 'teacher-view', 'learning-view', 'quiz-view', 'results-view'].forEach(v => {
+      const allViews = [
+        'student-home-view', 'teacher-login-view', 'teacher-dashboard-view',
+        'learning-view', 'quiz-view', 'results-view'
+      ];
+      
+      allViews.forEach(v => {
         document.getElementById(v).classList.add('hidden');
       });
       document.getElementById(`${view}-view`).classList.remove('hidden');
       
-      if (view === 'teacher') {
-        resetTeacherForm();
+      if (view === 'teacher-dashboard' && !currentTeacherUsername) {
+        showView('teacher-login');
+        return;
+      }
+    }
+
+    // Initialize Navigation
+    function initNavigation() {
+      const navButtons = document.getElementById('nav-buttons');
+      
+      if (isTeacherPage) {
+        navButtons.innerHTML = `
+          <button onclick="currentTeacherUsername ? showView('teacher-dashboard') : showView('teacher-login')" 
+            class="px-4 py-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition-all text-sm font-semibold">
+            👩‍🏫 Panel Guru
+          </button>
+        `;
+      } else {
+        navButtons.innerHTML = `
+          <button onclick="showView('student-home')" 
+            class="px-4 py-2 rounded-full text-white/80 hover:bg-white/20 transition-all text-sm font-semibold">
+            Beranda
+          </button>
+        `;
       }
     }
 
     // Render Functions
     function renderMaterials() {
-      const grid = document.getElementById('materials-grid');
-      const emptyState = document.getElementById('empty-state');
+      const gridSelector = isTeacherPage ? '#saved-materials-list' : '#student-materials-grid';
+      const grid = document.querySelector(gridSelector);
+      
+      if (!grid) return;
+      
+      const emptyStateSelector = isTeacherPage ? null : '#student-empty-state';
+      const emptyState = emptyStateSelector ? document.querySelector(emptyStateSelector) : null;
       
       if (materials.length === 0) {
-        grid.innerHTML = '';
-        emptyState.classList.remove('hidden');
+        if (isTeacherPage) {
+          grid.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Belum ada materi tersimpan</p>';
+        } else {
+          grid.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('hidden');
+        }
         return;
       }
       
-      emptyState.classList.add('hidden');
+      if (!isTeacherPage && emptyState) {
+        emptyState.classList.add('hidden');
+      }
       
-      const colors = ['from-blue-500 to-cyan-400', 'from-purple-500 to-pink-400', 'from-orange-500 to-yellow-400', 'from-green-500 to-emerald-400', 'from-red-500 to-rose-400'];
-      const icons = ['📖', '🔬', '🌍', '🧮', '🎨', '🎵', '💻', '🏛️'];
-      
-      grid.innerHTML = materials.map((m, i) => `
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover cursor-pointer" onclick="openMaterial('${m.__backendId}')">
-          <div class="h-32 bg-gradient-to-br ${colors[i % colors.length]} flex items-center justify-center">
-            <span class="text-5xl">${icons[i % icons.length]}</span>
+      if (isTeacherPage) {
+        grid.innerHTML = materials.map(m => `
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-800 truncate">${escapeHtml(m.title)}</p>
+              <p class="text-xs text-gray-500">${JSON.parse(m.questions || '[]').length} soal</p>
+            </div>
+            <button onclick="deleteMaterial('${m.__backendId}')" class="ml-2 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
+              🗑️
+            </button>
           </div>
-          <div class="p-5">
-            <h3 class="font-bold text-gray-800 text-lg mb-2">${escapeHtml(m.title)}</h3>
-            <p class="text-gray-500 text-sm line-clamp-2">${escapeHtml(m.content.substring(0, 100))}...</p>
-            <div class="mt-4 flex items-center justify-between">
-              <span class="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
-                ${JSON.parse(m.questions || '[]').length} Soal Quiz
-              </span>
-              <span class="text-purple-600">→</span>
+        `).join('');
+      } else {
+        const colors = ['from-blue-500 to-cyan-400', 'from-purple-500 to-pink-400', 'from-orange-500 to-yellow-400', 'from-green-500 to-emerald-400', 'from-red-500 to-rose-400'];
+        const icons = ['📖', '🔬', '🌍', '🧮', '🎨', '🎵', '💻', '🏛️'];
+        
+        grid.innerHTML = materials.map((m, i) => `
+          <div class="bg-white rounded-2xl shadow-xl overflow-hidden card-hover cursor-pointer" onclick="openMaterial('${m.__backendId}')">
+            <div class="h-32 bg-gradient-to-br ${colors[i % colors.length]} flex items-center justify-center">
+              <span class="text-5xl">${icons[i % icons.length]}</span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-bold text-gray-800 text-lg mb-2">${escapeHtml(m.title)}</h3>
+              <p class="text-gray-500 text-sm line-clamp-2">${escapeHtml(m.content.substring(0, 100))}...</p>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+                  ${JSON.parse(m.questions || '[]').length} Soal Quiz
+                </span>
+                <span class="text-purple-600">→</span>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `).join('');
+      }
     }
 
     function renderSavedMaterials() {
-      const list = document.getElementById('saved-materials-list');
-      
-      if (materials.length === 0) {
-        list.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Belum ada materi tersimpan</p>';
-        return;
-      }
-      
-      list.innerHTML = materials.map(m => `
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-          <div class="flex-1 min-w-0">
-            <p class="font-semibold text-gray-800 truncate">${escapeHtml(m.title)}</p>
-            <p class="text-xs text-gray-500">${JSON.parse(m.questions || '[]').length} soal</p>
-          </div>
-          <button onclick="deleteMaterial('${m.__backendId}')" class="ml-2 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
-            🗑️
-          </button>
-        </div>
-      `).join('');
+      renderMaterials();
     }
 
     // Teacher Functions
@@ -516,7 +675,6 @@
       currentQuestions = JSON.parse(currentMaterial.questions || '[]');
       if (currentQuestions.length === 0) return;
       
-      // Shuffle questions
       currentQuestions = currentQuestions.sort(() => Math.random() - 0.5);
       
       quizState = {
@@ -544,7 +702,6 @@
       
       document.getElementById('quiz-question').textContent = q.question;
       
-      // Shuffle options but track correct answer
       const options = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correct }));
       const shuffled = options.sort(() => Math.random() - 0.5);
       
@@ -690,6 +847,8 @@
 
     // Initialize
     async function init() {
+      initNavigation();
+      
       if (window.elementSdk) {
         window.elementSdk.init({
           defaultConfig,
@@ -706,10 +865,17 @@
         }
       }
       
+      // Set initial view based on page type
+      if (isTeacherPage) {
+        showView('teacher-login');
+      } else {
+        showView('student-home');
+      }
+      
       renderMaterials();
     }
 
     init();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1ca58df53cd4de',t:'MTc2OTA1OTY5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1cd4936273cdf1',t:'MTc2OTA2MTYyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
